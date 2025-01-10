@@ -56,6 +56,36 @@ if (count($evDobasok) > 0) {
     echo "A(z) $evszam évben nem került be egyetlen dobás sem a legjobbak közé." . PHP_EOL;
 }
 
+// 7. Statisztika az országkódok szerint
+$orszagStatisztika = [];
+foreach ($sportolok as $sportolo) {
+    if (!isset($orszagStatisztika[$sportolo->orszagkod])) {
+        $orszagStatisztika[$sportolo->orszagkod] = 0;
+    }
+    $orszagStatisztika[$sportolo->orszagkod]++;
+}
+echo "Országkód szerinti statisztika:" . PHP_EOL;
+foreach ($orszagStatisztika as $orszag => $db) {
+    echo "$orszag: $db dobás" . PHP_EOL;
+}
+
+// 8. magyarok.txt fájl létrehozása
+$hunFajl = fopen("magyarok.txt", "w");
+foreach ($hunEredmenyek as $sportolo) {
+    $sor = implode(";", [
+        $sportolo->helyezes,
+        $sportolo->eredmeny,
+        $sportolo->nev,
+        $sportolo->orszagkod,
+        $sportolo->helyszin,
+        $sportolo->datum
+    ]) . PHP_EOL;
+    fwrite($hunFajl, $sor);
+}
+fclose($hunFajl);
+
+echo "A magyar sportolók eredményei a magyarok.txt fájlba kerültek." . PHP_EOL;
+
 
 
 ?>
