@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Névnap kereső</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <h1>Névnap kereső</h1>
+    <div class="container">
+        <form id="searchForm">
+            <label for="date">Keresés dátum szerint (hónap-nap):</label>
+            <input type="text" id="date" name="date" placeholder="pl. 4-30">
+
+            <label for="name">Keresés név szerint:</label>
+            <input type="text" id="name" name="name" placeholder="pl. Katalin">
+
+            <button type="submit">Keresés</button>
+        </form>
+        <div class="results" id="results"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
