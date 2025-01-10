@@ -5,30 +5,56 @@ class Sportolo
 {
     public $helyezes;
     public $eredmeny;
-    public $sportolo;
+    public $nev;
     public $orszagkod;
     public $helyszin;
     public $datum;
 
-    public function __construct($helyezes, $eredmeny, $sportolo, $orszagkod, $helyszin, $datum)
+    public function __construct($helyezes, $eredmeny, $nev, $orszagkod, $helyszin, $datum)
     {
         $this->helyezes = intval($helyezes);
-        $this->eredmeny = floatval(str_replace(',', '.', $eredmeny));
-        $this->sportolo = $sportolo;
+        $this->eredmeny = floatval(str_replace(',', '.', $eredmeny)); // Eredmény átalakítása float típusra
+        $this->nev = $nev;
         $this->orszagkod = $orszagkod;
         $this->helyszin = $helyszin;
         $this->datum = $datum;
     }
 }
-$myfile = fopen("kalapacsvetes.txt", "r") or die("Unable to open file!");
-echo fread($myfile, filesize("kalapacsvetes.txt"));
-fclose($myfile);
 
-// $sportolok = [];
-// foreach ($lines as $line) {
-//     list($helyezes, $eredmeny, $sportolo, $orszagkod, $helyszin, $datum)
-//     $sportolok[] = new Sportolo($helyezes, $eredmeny, $sportolo, $orszagkod, $helyszin, $datum);
-// }
+// Fájl beolvasása
+$filename = "kalapacsvetes.txt";
+if (!file_exists($filename)) {
+    die("Hiba: A fájl nem található!");
+}
+
+$lines = file($filename, FILE_IGNORE_NEW_LINES);
+$fejlec = array_shift($lines); // Fejléc eltávolítása
+
+$sportolok = [];
+foreach ($lines as $line) {
+    list($helyezes, $eredmeny, $nev, $orszagkod, $helyszin, $datum) = explode(";", $line);
+    $sportolok[] = new Sportolo($helyezes, $eredmeny, $nev, $orszagkod, $helyszin, $datum);
+}
+
+// 4. Dobások száma
+echo "Dobások száma: " . count($sportolok) . PHP_EOL;
+
+// 5. Magyar sportolók dobásainak átlaga
+$hunEredmenyek = array_filter($sportolok, fn($s) => $s->orszagkod === "HUN");
+$hunAtlag = array_sum(array_map(fn($s) => $s->eredmeny, $hunEredmenyek)) / count($hunEredmenyek);
+echo "Magyar sportolók dobásainak átlaga: " . number_format($hunAtlag, 2) . " m" . PHP_EOL;
+
+// 6. Évszám alapú keresés
+echo "Kérem, adjon meg egy évszámot: ";
+$evszam = intval(trim(fgets(STDIN)));
+$evDobasok = array_filter($sportolok, fn($s) => strpos($s->datum, strval($evszam)) !== false);
+
+if (count($evDobasok) > 0) {
+    echo "A(z) $evszam évben " . count($evDobasok) . " dobás került be a legjobbak közé." . PHP_EOL;
+    echo "Sportolók: " . implode(", ", array_map(fn($s) => $s->nev, $evDobasok)) . PHP_EOL;
+} else {
+    echo "A(z) $evszam évben nem került be egyetlen dobás sem a legjobbak közé." . PHP_EOL;
+}
 
 
 
